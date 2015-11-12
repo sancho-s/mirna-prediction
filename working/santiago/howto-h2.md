@@ -3,19 +3,19 @@
 
 ###1. Compute GRMs
 
-Script:
+####Script:
 04_calc_GRMs.r
 
-Inputs:
-# bimfile
-# GCTAdosefile
-# GCTAinfofile
-# GCTAchrdosefile
-# GCTAchrinfofile
-# gencodefile
-# prevgrmsfile (optional)
+####Inputs:
+bimfile
+GCTAdosefile
+GCTAinfofile
+GCTAchrdosefile
+GCTAchrinfofile
+gencodefile
+prevgrmsfile (optional)
 
-Outputs:
+####Outputs:
 
 Create submission scripts with make_run_scripts_04.py.
 
