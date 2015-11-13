@@ -63,9 +63,9 @@ The computation is carried out in two steps, starting from genotypes.
 Set/s of three GRM global files, see Usage.
 
 ## Usage
-> Rscript 04_calc_GRMs.r <chr#>
+> Rscript 04_calc_GRMs.r [chr#]
 
-If chr# is 0, then three GRM global files are created.
+If chromosome number chr# is 0, then three GRM global files are created. This has to be done once.
 If chr# is between 1 and 22, then three GRM files for the chromosome, plus 3 for each miRNA in that chromosome, are created.
 
 Create submission scripts for queueing with `make_run_scripts_04.py`.
