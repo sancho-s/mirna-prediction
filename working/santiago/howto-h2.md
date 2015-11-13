@@ -1,49 +1,93 @@
+##compute-h2
+
+## Description
+Computes heritability for a given set of miRNAs (it could actually be used for other gene products as well).
+These are used, e.g., for assessing the quality of prediction models.
+
+The computation is carried out in two steps, starting from genotypes.
 
 ##Steps to perform heritability (h2) calculation
 
-###1. Compute GRMs
+#1. Compute GRMs
 
-####Script:
-04_calc_GRMs.r
+## Input files
 
-####Inputs:
-bimfile (no header). Sample line:
-```
-1       rs10399749      0       55299   T       C
-```
+- SNP location file (e.g., `GTEx_Analysis_2014-06-13.hapmapSnpsCEU.bim`). Without header.
+> [I]   rsid   [I]   pos   ...
+> chr   rsid   ?   pos   al1   al2
 
-GCTAdosefile (no header). Sample line:
-```
-GTEX-P4PP->GTEX-P4PP MLDOSE 1.983 2 2 0.003 0 2 2 2 2 ...
-```
+  - `chr` is the chromosome number
+  - `rsid` is rs number of SNP
+  - `?` is ...
+  - `pos` is the location of the SNP
+  - `al1` is the allele #1
+  - `al2` is the allele #2
+  - Columns with `[I]` and additional columns at the end are ignored
 
-GCTAinfofile (with header, for all chromosomes). Sample lines:
-```
-SNP     Al1   Al2  Freq1     MAF    Quality Rsq
-rs10399749    T C  0.171     0.171  0.792  0.409
-```
+- GCTA dose file (e.g., `GTEx_Analysis_2014-06-13.hapmapSnpsCEU.mldose.gz`): SNPs dosages, for all chromosomes. Without header.
+> ID->ID   MLDOSE   [dosages]
 
-GCTAchrdosefile (as GCTAdosefile, one per chromosome)
+  - `ID` is the sample ID
+  - `->` is literal
+  - `ID` is the sample ID (again)
+  - `MLDOSE` is literal
+  - `[dosages]` are dosages for all SNPs
 
-GCTAchrinfofile (as GCTAinfofile, one per chromosome)
+ Sample line:
 
-gencodefile
-```
-```
+> GTEX-P4PP->GTEX-P4PP MLDOSE 1.983 2 2 0.003 0 2 2 2 2 ...
 
-prevgrmsfile (optional)
-```
-```
+- GCTA info file (e.g., `GTEx_Analysis_2014-06-13.hapmapSnpsCEU.mlinfo.gz`): SNPs info, for all chromosomes. With header line.
 
-####Outputs:
+> rsid   al1   al2   freq1   MAF   qual   rsq
 
-Create submission scripts with make_run_scripts_04.py.
+  - `rsid` is rs number of SNP
+  - `al1` is the allele #1
+  - `al2` is the allele #2
+  - `freq1` is the frequency of allele #?
+  - `MAF` is the minor allele frequency, MAF = min(freq1,1-freq1)
+  - `qual` is the quality of ...
+  - `rsq` is the correlation coefficient of ...
 
-###2. Compute h2
+- GCTA chr dose file (e.g., `GTEx_Analysis_2014-06-13.hapmapSnpsCEU.chr1.mldose.gz`): same as GCTA dose file, for one chromosome.
 
-Script:
+- GCTA chr info file (e.g., `GTEx_Analysis_2014-06-13.hapmapSnpsCEU.chr1.mlinfo.gz`): same as GCTA info file, for one chromosome.
 
-Inputs:
+- miRNA info file (e.g., `...`). Without header.
 
-Outputs:
+> chr   [I]   start   end   name  ...
 
+  - `chr` is the chromosome number
+  - `start` is the miRNA start location
+  - `end` is the miRNA end location
+  - `name` is the miRNA name
+  - Columns with `[I]` and additional columns at the end are ignored
+
+- Previously processed miRNAs: miRNA that were already processed, ignore then. Without header. A flag has to be changed in the code to use this feature.
+
+> name
+
+  - `name` is the miRNA name
+
+
+## Output files
+
+Set/s of three GRM global files, see Usage.
+
+## Usage
+> Rscript 04_calc_GRMs.r <chr#>
+
+If chr# is 0, then three GRM global files are created.
+If chr# is between 1 and 22, then three GRM files for the chromosome, plus 3 for each miRNA in that chromosome, are created.
+
+Create submission scripts for queueing with `make_run_scripts_04.py`.
+
+
+#2. Compute h2
+
+## Input files
+
+## Output files
+
+## Usage
+> 
