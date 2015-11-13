@@ -9,7 +9,8 @@ date = Sys.Date()
 
 ##ToDo:
 ###Fully replace directories
-###Allow for ot using prevgrmsfile and setdiff
+###Allow for not using prevgrmsfile and setdiff (and test it)
+###Use case chr=0 for making globalGRM once 
 
 my.dir <- "/group/im-lab/nas40t2/hwheeler/cross-tissue/"
 rna.dir <- my.dir %&% "gtex-rnaseq/"
@@ -20,25 +21,28 @@ grm.dir <- my.dir %&% "gtex-grms/"
 my2.dir <- "/group/im-lab/nas40t2/santiago/data/gtex/"
 grm2.dir <- my2.dir %&% "gtex-grms/"
 
+gencodeset <- args[1]
+
 ###make globalGRM, only need to do once
 
 machpre <- gt.dir %&% "GTEx_Analysis_2014-06-13.hapmapSnpsCEU" 
-#make_global <- TRUE
 make_global <- FALSE
-if ( make_global ) {
+if ( gencodeset == 0 ) {
+#    make_global <- TRUE
+#}
+#if ( make_global ) {
+    cat( "Make only global GRMs\n" )
     GCTAdosefile <- machpre %&% ".mldose.gz"
     GCTAinfofile <- machpre %&% ".mlinfo.gz"
     GTExbase <- grm2.dir %&% "GTEx.global"
     runGCTAglo <- "gcta64 --dosage-mach-gz " %&% GCTAdosefile %&% " " %&% GCTAinfofile %&% " --make-grm-bin --out " %&% GTExbase
     #runGCTAglo <- "gcta64 --dosage-mach-gz " %&% gt.dir %&% machpre %&% "mldose.gz " %&% gt.dir %&% machpre %&% "mlinfo.gz --make-grm-bin --out " %&% grm2.dir %&% "GTEx.global"
     system(runGCTAglo)
-    #stop()
     quit()
 }
 
 ##make chrGRM
 
-gencodeset <- args[1]
 machprechr <- machpre %&% ".chr" %&% gencodeset
 GCTAchrdosefile <- machprechr %&% ".mldose.gz"
 GCTAchrinfofile <- machprechr %&% ".mlinfo.gz"
@@ -49,22 +53,20 @@ system(runGCTAchr)
 
 ###make localGRMs, for subset of genes in gencodeset
 
-gencodefile <- annot.dir %&% "gencode.v18.genes.patched_contigs.summary.protein.chr" %&% args[1]
-
 bimfile <- gt.dir %&% "GTEx_Analysis_2014-06-13.hapmapSnpsCEU.bim" ###get SNP position information###
 bim <- read.table(bimfile)
 rownames(bim) <- bim$V2
 
+gencodefile <- annot.dir %&% "gencode.v18.genes.patched_contigs.summary.protein.chr" %&% args[1]
 gencode <- read.table(gencodefile)
 rownames(gencode) <- gencode[,5]
 
-read_prev <- TRUE
-#read_prev <- FALSE
+#read_prev <- TRUE
+read_prev <- FALSE
 if (read_prev) {
     prevgrmsfile <- my.dir %&% "done.grms"
     #prevgrmsfile <- "done.grms"
     finished.grms <- scan(prevgrmsfile,"character") ###already calculated a bunch of grms using old script with whole genome mach files, don't run them again
-    
     ensidlist <- setdiff(rownames(gencode),finished.grms)
 } else {
     #ensidlist <- gencode[,5]
@@ -82,7 +84,7 @@ for(i in 1:length(ensidlist)){
     chrsnps <- subset(bim,bim[,1]==c) ### pull snps on same chr
     cissnps <- subset(chrsnps,chrsnps[,4]>=start & chrsnps[,4]<=end) ### pull cis-SNP info
     snplist <- cissnps[,2]
-	SNPtmpfile <- my2.dir %&% "tmp.SNPlist." %&% gencodeset
+    SNPtmpfile <- my2.dir %&% "tmp.SNPlist." %&% gencodeset
     write.table(snplist,file=SNPtmpfile,quote=F,col.names=F,row.names=F)
     #write.table(snplist, file= my2.dir %&% "tmp.SNPlist." %&% gencodeset,quote=F,col.names=F,row.names=F)
     grmlocalbase <- grm2.dir %&% gene
