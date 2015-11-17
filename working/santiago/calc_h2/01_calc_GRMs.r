@@ -7,10 +7,11 @@ date = Sys.Date()
 ### /nas40t2/hwheeler/PrediXcan_CV/GTEx_2014-06013_release/1_vcf2dosage.mach_gtex_hapmapSNPs.pl
 ### and scp'd to tarbell: /group/im-lab/hwheeler/cross-tissue/gtex-genotypes/
 
+###Takes one argument for the chromosome number. Enter 0 to make globalGRM once.
+
 ##ToDo:
 ###Fully replace directories
-###Allow for not using prevgrmsfile and setdiff (and test it)
-###Use case chr=0 for making globalGRM once 
+
 
 my.dir <- "/group/im-lab/nas40t2/hwheeler/cross-tissue/"
 rna.dir <- my.dir %&% "gtex-rnaseq/"
